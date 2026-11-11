@@ -11,3 +11,4 @@ target/
 test-results/
 playwright-report/
 *.log
+*.tsbuildinfo

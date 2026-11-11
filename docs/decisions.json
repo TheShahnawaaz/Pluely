@@ -25,5 +25,11 @@
     "History encryption product default",
     "User test hardware"
   ],
-  "github": "Not created or pushed"
+  "github": {
+    "repository": "TheShahnawaaz/Pluely",
+    "url": "https://github.com/TheShahnawaaz/Pluely",
+    "visibility": "public",
+    "branch": "main",
+    "writeAccess": "Verified with actual Git push and remote SHA comparison"
+  }
 }
