@@ -9,3 +9,5 @@ Pluely application code is MIT licensed. The application's MIT license does not 
 - **Tauri, React, Rust dependencies, Lucide, Markdown tooling and platform bindings** retain their package-specific licenses recorded in Cargo.lock and package-lock.json. Source dependencies are obtained from their official package registries. Distribution packaging must retain their notices.
 
 The macOS system-audio helper in `native/macos` is newly written Pluely code using public Apple frameworks. AudioTee's unlicensed source/binary is not bundled or copied.
+
+`THIRD_PARTY_LICENSES.txt` contains collected upstream license/notice texts and is bundled with installers. Packaging regenerates it from the installed lockfile sources. The checked-in report also includes development/build dependencies and platform variants; inclusion of a notice does not imply every listed source is linked into every target binary.

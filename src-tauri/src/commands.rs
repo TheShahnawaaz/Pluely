@@ -1,6 +1,6 @@
 use super::{
     capture, llm, models,
-    service::{delete_key, get_key, set_key, Service, StorageStatus},
+    service::{delete_key, get_key, get_llm_key, set_key, Service, StorageStatus},
 };
 use base64::{engine::general_purpose::STANDARD, Engine};
 use pluely_core::{
@@ -24,8 +24,8 @@ pub fn get_storage_status(state: State<'_, Arc<Service>>) -> StorageStatus {
     state.status()
 }
 #[tauri::command]
-pub fn provider_status() -> serde_json::Value {
-    json!({"llm":get_key("llm").ok().flatten().is_some(),"groq":get_key("groq").ok().flatten().is_some(),"elevenlabs":get_key("elevenlabs").ok().flatten().is_some()})
+pub fn provider_status(state: State<'_, Arc<Service>>) -> serde_json::Value {
+    json!({"llm":get_llm_key(&state.snapshot().settings.llm.base_url).ok().flatten().is_some(),"groq":get_key("groq").ok().flatten().is_some(),"elevenlabs":get_key("elevenlabs").ok().flatten().is_some()})
 }
 #[tauri::command]
 pub fn get_capabilities() -> serde_json::Value {
@@ -52,15 +52,32 @@ pub fn unlock_history(
     state.unlock(&app, passphrase).map_err(err)
 }
 #[tauri::command]
-pub fn save_credential(provider: String, secret: String) -> Cmd<bool> {
-    if provider == "history" {
-        return Err("Invalid credential slot.".into());
-    }
-    set_key(&provider, secret.trim()).map(|_| true).map_err(err)
+pub fn save_credential(provider: String, secret: String, endpoint: Option<String>) -> Cmd<bool> {
+    let slot = if provider == "llm" {
+        pluely_core::model::llm_credential_slot(
+            endpoint.as_deref().ok_or("The LLM endpoint is required")?,
+        )
+        .map_err(err)?
+    } else if ["groq", "elevenlabs"].contains(&provider.as_str()) {
+        provider
+    } else {
+        return Err("Invalid credential provider".into());
+    };
+    set_key(&slot, secret.trim()).map(|_| true).map_err(err)
 }
 #[tauri::command]
-pub fn delete_credential(provider: String) -> Cmd<bool> {
-    delete_key(&provider).map(|_| true).map_err(err)
+pub fn delete_credential(provider: String, endpoint: Option<String>) -> Cmd<bool> {
+    let slot = if provider == "llm" {
+        pluely_core::model::llm_credential_slot(
+            endpoint.as_deref().ok_or("The LLM endpoint is required")?,
+        )
+        .map_err(err)?
+    } else if ["groq", "elevenlabs"].contains(&provider.as_str()) {
+        provider
+    } else {
+        return Err("Invalid credential provider".into());
+    };
+    delete_key(&slot).map(|_| true).map_err(err)
 }
 #[tauri::command]
 pub fn save_settings(
@@ -217,6 +234,7 @@ pub async fn start(
     }
     if snap.settings.stt.provider == "local" {
         models::path(&service, &snap.settings.stt.local_model)?;
+        models::sidecar("pluely-transcribe")?;
     } else if get_key(&snap.settings.stt.provider)?.is_none() {
         return Err(Error::Invalid(
             "Add a transcription API key or choose a downloaded local model in Settings.".into(),
@@ -488,7 +506,7 @@ pub fn hide_overlay(app: AppHandle) -> Cmd<bool> {
 }
 #[tauri::command]
 pub async fn test_llm(config: LlmConfig) -> Cmd<String> {
-    let key = get_key("llm").map_err(err)?;
+    let key = get_llm_key(&config.base_url).map_err(err)?;
     providers::chat(
         &config,
         key.as_deref(),
@@ -546,7 +564,7 @@ pub async fn import_context_file(app: AppHandle, mode_id: String) -> Cmd<Option<
     if mode_id.len() > 128 {
         return Err("Invalid mode identifier".into());
     }
-    tauri::async_runtime::spawn_blocking(move||{let path=app.dialog().file().add_filter("Context document",&["pdf","md","txt","json","csv"]).blocking_pick_file();let Some(path)=path else{return Ok(None)};let path=path.into_path().map_err(err)?;let size=path.metadata().map_err(err)?.len();if size>20*1024*1024{return Err("Context files must be no larger than 20 MB.".into())}let extension=path.extension().unwrap_or_default().to_string_lossy().to_lowercase();let content=if extension=="pdf"{pdf_extract::extract_text(&path).map_err(|_|"Could not extract PDF text. Scanned/image-only PDFs need OCR before import.".to_owned())?}else{std::fs::read_to_string(&path).map_err(|_|"Choose a UTF-8 text document.".to_owned())?};if content.len()>1024*1024{return Err("Extracted text exceeds the 1 MB context budget. Split the document into smaller files.".into())}Ok(Some(ContextFile{id:uuid::Uuid::new_v4().to_string(),name:path.file_name().unwrap_or_default().to_string_lossy().into_owned(),content,bytes:size}))}).await.map_err(err)?
+    tauri::async_runtime::spawn_blocking(move||{let path=app.dialog().file().add_filter("Context document",&["pdf","md","txt","json","csv"]).blocking_pick_file();let Some(path)=path else{return Ok(None)};let path=path.into_path().map_err(err)?;let size=path.metadata().map_err(err)?.len();if size>20*1024*1024{return Err("Context files must be no larger than 20 MB.".into())}let extension=path.extension().unwrap_or_default().to_string_lossy().to_lowercase();let content=if extension=="pdf"{pdf_extract::extract_text(&path).map_err(|_|"Could not extract PDF text. Scanned/image-only PDFs need OCR before import.".to_owned())?}else{std::fs::read_to_string(&path).map_err(|_|"Choose a UTF-8 text document.".to_owned())?};if content.trim().is_empty(){return Err("This file contains no extractable text. Scanned PDFs need OCR before import.".into())}if content.len()>1024*1024{return Err("Extracted text exceeds the 1 MB context budget. Split the document into smaller files.".into())}Ok(Some(ContextFile{id:uuid::Uuid::new_v4().to_string(),name:path.file_name().unwrap_or_default().to_string_lossy().into_owned(),content,bytes:size}))}).await.map_err(err)?
 }
 #[tauri::command]
 pub async fn export_session(

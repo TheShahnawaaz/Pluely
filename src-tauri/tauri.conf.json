@@ -6,7 +6,7 @@
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build",
+    "beforeBuildCommand": "npm run build && node scripts/collect-licenses.mjs",
     "frontendDist": "../dist"
   },
   "app": {
@@ -51,6 +51,11 @@
       "nsis": {
         "displayLanguageSelector": false
       }
+    },
+    "resources": {
+      "../THIRD_PARTY_NOTICES.md": "licenses/THIRD_PARTY_NOTICES.md",
+      "../THIRD_PARTY_LICENSES.txt": "licenses/THIRD_PARTY_LICENSES.txt",
+      "../public/assets/OFL-Inter.txt": "licenses/OFL-Inter.txt"
     }
   }
 }

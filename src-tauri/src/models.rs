@@ -113,6 +113,8 @@ pub async fn download(service: Arc<Service>, app: AppHandle, id: String) -> Resu
     if model.downloaded {
         return Ok(());
     }
+    let dir = service.dir.join("models");
+    tokio::fs::create_dir_all(&dir).await?;
     let token = CancellationToken::new();
     {
         let mut downloads = service.downloads.lock().unwrap();
@@ -123,8 +125,6 @@ pub async fn download(service: Arc<Service>, app: AppHandle, id: String) -> Resu
         }
         downloads.insert(id.clone(), token.clone());
     }
-    let dir = service.dir.join("models");
-    tokio::fs::create_dir_all(&dir).await?;
     let temporary = dir.join(format!(".{}.partial", model.id));
     let result=async {
   // Hugging Face redirects model files to its signed CDN. No credentials or user data are sent.
@@ -192,7 +192,12 @@ pub fn import(service: &Service, source: PathBuf) -> Result<ModelInfo> {
     };
     let temp = dir.join(format!(".{id}.partial"));
     std::fs::copy(source, &temp)?;
-    std::fs::rename(temp, dir.join(filename))?;
+    let destination = dir.join(filename);
+    if destination.exists() {
+        std::fs::remove_file(temp)?;
+    } else {
+        std::fs::rename(temp, destination)?;
+    }
     std::fs::write(dir.join(format!("{id}.json")), serde_json::to_vec(&model)?)?;
     Ok(model)
 }

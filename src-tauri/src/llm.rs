@@ -1,4 +1,4 @@
-use super::service::{get_key, Service};
+use super::service::{get_llm_key, Service};
 use base64::{engine::general_purpose::STANDARD, Engine};
 use pluely_core::{
     model::{Error, Message, Result, Snapshot},
@@ -52,7 +52,7 @@ pub async fn ask(
     };
     let messages =
         providers::meeting_messages(&mode, &transcript, &history, &prompt, image.as_deref());
-    let key = get_key("llm")?;
+    let key = get_llm_key(&config.base_url)?;
     let token = service.task(&format!("chat:{id}"));
     let message_id = uuid::Uuid::new_v4().to_string();
     service.activity();
@@ -83,6 +83,9 @@ pub async fn ask(
     })?;
     tauri::async_runtime::spawn(async move {
         let result = providers::chat(&config, key.as_deref(), messages, &token, |delta| {
+            if token.is_cancelled() {
+                return;
+            }
             let revision = {
                 let mut snapshot = service.snapshot.lock().unwrap();
                 let Some(meeting) = snapshot.sessions.iter_mut().find(|s| s.id == id) else {
@@ -110,7 +113,13 @@ pub async fn ask(
                         message.text = err.clone().unwrap_or_default()
                     }
                 }
-                meeting.last_error = err.clone();
+                if meeting.messages.last().is_some_and(|m| m.id == message_id) {
+                    meeting.last_error = if token.is_cancelled() {
+                        None
+                    } else {
+                        err.clone()
+                    };
+                }
             }
             Ok(())
         });
@@ -167,7 +176,7 @@ pub fn generate_notes(service: Arc<Service>, app: AppHandle, id: String) -> Resu
         .find(|m| m.id == session.mode_id)
         .cloned()
         .unwrap_or_else(|| snap.current_mode());
-    let key = get_key("llm")?;
+    let key = get_llm_key(&config.base_url)?;
     let token = service.task(&format!("notes:{id}"));
     let initial = service.mutate(&app, true, |s| {
         let target = s
@@ -186,6 +195,9 @@ pub fn generate_notes(service: Arc<Service>, app: AppHandle, id: String) -> Resu
   let source=if chunks.len()>1{let mut summaries=vec![];for (index,part) in chunks.iter().enumerate(){let _=app.emit("pluely:progress",json!({"kind":"notes","id":id,"message":format!("Summarizing part {} of {}",index+1,chunks.len())}));let out=providers::chat(&config,key.as_deref(),vec![json!({"role":"system","content":system}),json!({"role":"user","content":format!("Extract the important facts from this chronological transcript part. Preserve timestamps and uncertainty.\n\n{part}")})],&token,|_|{}).await?;summaries.push(out)}summaries.join("\n\n")}else{transcript.clone()};
   providers::chat(&config,key.as_deref(),vec![json!({"role":"system","content":system}),json!({"role":"user","content":format!("Generate the final meeting notes from this source:\n\n{source}")})],&token,|_|{}).await
  }.await;
+        if token.is_cancelled() {
+            return;
+        }
         let error = result.as_ref().err().map(ToString::to_string);
         let update = service.mutate(&app, true, |s| {
             if let Some(meeting) = s.sessions.iter_mut().find(|s| s.id == id) {

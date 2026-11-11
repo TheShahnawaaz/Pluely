@@ -13,6 +13,29 @@ pub fn client() -> Result<reqwest::Client> {
         .build()
         .map_err(|_| Error::Provider("Could not initialize network client.".into()))
 }
+async fn bounded_response(
+    response: reqwest::Response,
+    cancel: &CancellationToken,
+) -> Result<Vec<u8>> {
+    let mut stream = response.bytes_stream();
+    let mut body = Vec::new();
+    loop {
+        let next = tokio::select! {
+            _ = cancel.cancelled() => return Err(Error::Cancelled),
+            chunk = stream.next() => chunk,
+        };
+        let Some(chunk) = next else { break };
+        let chunk =
+            chunk.map_err(|_| Error::Provider("Provider response was interrupted.".into()))?;
+        if body.len() + chunk.len() > MAX_RESPONSE {
+            return Err(Error::Provider(
+                "Provider response exceeded the 1 MB budget.".into(),
+            ));
+        }
+        body.extend_from_slice(&chunk);
+    }
+    Ok(body)
+}
 pub async fn transcribe(
     config: &SttConfig,
     key: &str,
@@ -68,12 +91,7 @@ pub async fn transcribe(
             status.as_u16()
         )));
     }
-    let data = tokio::select! {_=cancel.cancelled()=>return Err(Error::Cancelled),r=response.bytes()=>r.map_err(|_|Error::Provider("Could not read transcription response.".into()))?};
-    if data.len() > MAX_RESPONSE {
-        return Err(Error::Provider(
-            "Transcription response was too large.".into(),
-        ));
-    }
+    let data = bounded_response(response, cancel).await?;
     let value: Value = serde_json::from_slice(&data)
         .map_err(|_| Error::Provider("The transcription service returned invalid JSON.".into()))?;
     let text = value
@@ -157,6 +175,7 @@ pub fn meeting_messages(
 pub struct SseDecoder {
     buffer: Vec<u8>,
     data: Vec<String>,
+    data_bytes: usize,
 }
 impl SseDecoder {
     pub fn push(&mut self, chunk: &[u8]) -> Result<Vec<String>> {
@@ -178,9 +197,17 @@ impl SseDecoder {
             if line.is_empty() {
                 if !self.data.is_empty() {
                     events.push(self.data.join("\n"));
-                    self.data.clear()
+                    self.data.clear();
+                    self.data_bytes = 0
                 }
             } else if let Some(data) = line.strip_prefix("data:") {
+                // Count separators too: empty data lines still allocate an entry.
+                self.data_bytes += data.len() + 1;
+                if self.data_bytes > MAX_RESPONSE {
+                    return Err(Error::Provider(
+                        "Streaming event exceeded the response budget.".into(),
+                    ));
+                }
                 self.data
                     .push(data.strip_prefix(' ').unwrap_or(data).to_owned())
             }
@@ -191,7 +218,8 @@ impl SseDecoder {
         let mut events = self.push(b"\n\n")?;
         if !self.data.is_empty() {
             events.push(self.data.join("\n"));
-            self.data.clear()
+            self.data.clear();
+            self.data_bytes = 0
         }
         Ok(events)
     }
@@ -231,10 +259,7 @@ where
         .and_then(|x| x.to_str().ok())
         .is_some_and(|s| s.contains("text/event-stream"));
     if !event_stream {
-        let b = tokio::select! {_=cancel.cancelled()=>return Err(Error::Cancelled),v=response.bytes()=>v.map_err(|_|Error::Provider("AI response could not be read.".into()))?};
-        if b.len() > MAX_RESPONSE {
-            return Err(Error::Provider("AI response was too large.".into()));
-        }
+        let b = bounded_response(response, cancel).await?;
         let v: Value = serde_json::from_slice(&b).map_err(|_| {
             Error::Provider(
                 "AI endpoint returned neither a supported stream nor valid JSON.".into(),
@@ -330,7 +355,14 @@ mod tests {
     #[test]
     fn event_budget_enforced() {
         let mut d = SseDecoder::default();
-        assert!(d.push(&vec![b'x'; MAX_RESPONSE + 1]).is_err())
+        assert!(d.push(&vec![b'x'; MAX_RESPONSE + 1]).is_err());
+        // A multiline event must remain bounded even across individually small chunks.
+        let mut d = SseDecoder::default();
+        let line = format!("data: {}\n", "x".repeat(1024));
+        for _ in 0..1022 {
+            assert!(d.push(line.as_bytes()).unwrap().is_empty());
+        }
+        assert!(d.push(line.as_bytes()).is_err());
     }
     #[test]
     fn tail_preserves_unicode() {

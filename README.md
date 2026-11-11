@@ -6,7 +6,7 @@ Bring your own OpenAI-compatible language model and choose local Whisper transcr
 
 ## Status
 
-Initial development scaffold. Native capture, provider integrations and release builds are being implemented and are not yet verified. This repository is not a finished application.
+The desktop implementation, provider adapters, local Whisper worker, and native CI configuration are present. Portable checks pass, but Windows/macOS builds and device behavior are not yet verified: GitHub Actions is currently blocked before jobs can start. No verified installers have been produced. This repository is not a finished application. See [validation and continuation status](docs/VALIDATION.md).
 
 ## Agreed first-release scope
 
@@ -46,6 +46,12 @@ For macOS installer builds, pass `--config src-tauri/tauri.macos.conf.json` to `
 No account, app-owned server, telemetry or subscription is required. Select the LLM and transcription mode explicitly. Cloud transcription sends audio directly to the chosen provider; AI requests send the selected meeting/document/screen context to the configured model endpoint. Local transcription does not make a separately selected cloud LLM local.
 
 Choose device-key encryption, passphrase encryption or OS-permission-only history during onboarding. Credentials are stored separately in the OS credential store and are excluded from workspace exports. Portable backups require a separate passphrase. Audio buffers and screenshots are not saved as recordings in meeting history.
+
+New workspaces default to local transcription. Onboarding offers an explicit model download or offline import, alongside Groq and ElevenLabs using your own key. LLM keys are stored separately for each configured endpoint.
+
+## Engineering documentation
+
+Start at the [documentation index](docs/README.md) for architecture, provider/privacy contracts, native IPC, build/release steps, and machine-readable validation. These describe the current implementation and its known limits, including segment-based transcription, primary-display screen context, and capture-exclusion compatibility.
 
 ## Validation and distribution
 

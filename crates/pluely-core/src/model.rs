@@ -334,3 +334,30 @@ mod tests {
         assert_eq!(v.sessions[0].status, "ready")
     }
 }
+
+/// A saved chat credential belongs to one normalized API endpoint, never all hosts.
+pub fn llm_credential_slot(endpoint: &str) -> Result<String> {
+    use sha2::{Digest, Sha256};
+    let url = validate_endpoint(endpoint)?;
+    let canonical = url.as_str().trim_end_matches('/');
+    Ok(format!("llm:{:x}", Sha256::digest(canonical.as_bytes())))
+}
+#[cfg(test)]
+mod credential_tests {
+    use super::*;
+    #[test]
+    fn credential_scope_is_endpoint_specific() {
+        assert_eq!(
+            llm_credential_slot("https://api.example.com/v1/").unwrap(),
+            llm_credential_slot("https://api.example.com/v1").unwrap()
+        );
+        assert_ne!(
+            llm_credential_slot("https://api.example.com/v1").unwrap(),
+            llm_credential_slot("https://another.example.com/v1").unwrap()
+        );
+        assert_ne!(
+            llm_credential_slot("https://api.example.com/team-a").unwrap(),
+            llm_credential_slot("https://api.example.com/team-b").unwrap()
+        );
+    }
+}

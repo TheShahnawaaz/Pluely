@@ -194,7 +194,7 @@ pub fn run() {
  }).build())
  .setup(|app|{
   let service=Service::open(app.path().app_data_dir()?)?;app.manage(service.clone());
-  let overlay=WebviewWindowBuilder::new(app,"overlay",WebviewUrl::App("index.html?window=overlay".into())).title("Pluely assistant").inner_size(690.,500.).min_inner_size(420.,150.).decorations(false).transparent(true).always_on_top(true).skip_taskbar(true).visible(false).resizable(true).build()?;let _=overlay.set_shadow(false);
+  let overlay=WebviewWindowBuilder::new(app,"overlay",WebviewUrl::App("index.html?window=overlay".into())).title("Pluely assistant").inner_size(690.,500.).min_inner_size(420.,52.).decorations(false).transparent(true).always_on_top(true).skip_taskbar(true).visible(false).resizable(true).build()?;let _=overlay.set_shadow(false);
   let dashboard=MenuItem::with_id(app,"dashboard","Open Pluely",true,None::<&str>)?;
   let record=MenuItem::with_id(app,"record","Start / stop listening",true,None::<&str>)?;
   let visibility=MenuItem::with_id(app,"visibility","Show / hide assistant",true,None::<&str>)?;

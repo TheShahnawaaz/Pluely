@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "scope": "Source commit containing this record",
+  "repository": "https://github.com/TheShahnawaaz/Pluely",
+  "status": "blocked_native_validation",
+  "productionReady": false,
+  "verifiedInstallers": [],
+  "host": {
+    "os": "Linux",
+    "supportedDesktopTarget": false,
+    "node": "24.22.1",
+    "npm": "11.9",
+    "rust": "1.99.1",
+    "browser": "system Chromium via Playwright executable override"
+  },
+  "checks": [
+    {"command": "npm run build", "result": "passed"},
+    {"command": "npm test", "result": "passed", "tests": 11},
+    {"command": "cargo test -p pluely-core", "result": "passed", "unitTests": 17, "httpIntegrationTests": 3},
+    {"command": "cargo fmt --all --check", "result": "passed"},
+    {"command": "PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npx playwright test", "result": "passed", "tests": 4, "scope": "UI preview only"},
+    {"command": "cargo check/build -p pluely-transcribe", "result": "passed", "scope": "Linux worker only"}
+  ],
+  "localInference": {
+    "result": "passed",
+    "platform": "Linux",
+    "model": "Whisper Tiny, test-only public model",
+    "modelSha256": "be07e048e1e599ad46341c8d2a135645097a538221678b7acdd1b1919c6e1b21",
+    "sample": "Public ggml-org/whisper.cpp samples/jfk.wav",
+    "recognizedText": "And so my fellow Americans ask not what your country can do for you, ask what you can do for your country.",
+    "elapsedSecondsApproximate": 1.2,
+    "nativeDeviceTest": false
+  },
+  "blocker": {
+    "service": "GitHub Actions",
+    "kind": "account_scheduling_restriction",
+    "run": "https://github.com/TheShahnawaaz/Pluely/actions/runs/42983343223",
+    "jobsStarted": false,
+    "requiredAction": "Repository owner resolves GitHub account restriction or supplies usable supported-OS runners"
+  },
+  "unverified": [
+    "Windows/macOS Tauri compilation",
+    "macOS Swift capture helper compilation",
+    "Native installer packaging and installation",
+    "Microphone/system audio and permissions on supported devices",
+    "Capture exclusion and focus behavior",
+    "Native OS credential storage",
+    "Authenticated real cloud STT and LLM/vision calls",
+    "Native shutdown, crash recovery, long-session and device-switch behavior",
+    "Production signing/notarization"
+  ],
+  "resumeDocument": "BUILD_AND_RELEASE.md"
+}

@@ -31,5 +31,13 @@
     "branch": "main",
     "writeAccess": "Verified with actual Git push and remote SHA comparison"
   },
-  "historyProtection": "User-selectable device-key/passphrase/OS-permission modes; recommend device-key encryption"
+  "historyProtection": "User-selectable device-key/passphrase/OS-permission modes; recommend device-key encryption",
+  "transcriptionDefault": "Local Whisper; explicit cloud selection remains available",
+  "releaseTargets": [
+    "aarch64-apple-darwin",
+    "x86_64-apple-darwin",
+    "x86_64-pc-windows-msvc"
+  ],
+  "minimumMacOS": "14.2",
+  "status": "Implementation present; native builds and installers blocked on GitHub Actions scheduling"
 }

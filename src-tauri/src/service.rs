@@ -243,17 +243,26 @@ impl Service {
 }
 fn entry(provider: &str) -> Result<keyring::Entry> {
     let account = match provider {
-        "llm" => "api:llm",
-        "groq" => "api:groq",
-        "elevenlabs" => "api:elevenlabs",
-        "history" => "history:key:v1",
+        "groq" => "api:groq".to_owned(),
+        "elevenlabs" => "api:elevenlabs".to_owned(),
+        "history" => "history:key:v1".to_owned(),
+        value
+            if value
+                .strip_prefix("llm:")
+                .is_some_and(|s| s.len() == 64 && s.chars().all(|c| c.is_ascii_hexdigit())) =>
+        {
+            format!("api:{value}")
+        }
         _ => return Err(Error::Invalid("Unknown credential slot.".into())),
     };
-    keyring::Entry::new("com.pluely.desktop", account).map_err(|_| {
+    keyring::Entry::new("com.pluely.desktop", &account).map_err(|_| {
         Error::Invalid(
             "OS credential storage is unavailable. Unlock the OS keychain and retry.".into(),
         )
     })
+}
+pub fn get_llm_key(endpoint: &str) -> Result<Option<String>> {
+    get_key(&pluely_core::model::llm_credential_slot(endpoint)?)
 }
 pub fn get_key(provider: &str) -> Result<Option<String>> {
     match entry(provider)?.get_password() {

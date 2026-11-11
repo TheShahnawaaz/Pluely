@@ -7,10 +7,10 @@
     "temperature": 0.3
   },
   "stt": {
-    "provider": "groq",
-    "model": "whisper-large-v3-turbo",
+    "provider": "local",
+    "model": "base",
     "language": "auto",
-    "localModel": ""
+    "localModel": "base"
   },
   "theme": "light",
   "captureExcluded": false,
