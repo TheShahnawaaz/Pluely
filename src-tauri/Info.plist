@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+ <key>NSMicrophoneUsageDescription</key><string>Pluely captures your microphone during sessions you explicitly start.</string>
+ <key>NSAudioCaptureUsageDescription</key><string>Pluely captures system audio during sessions you explicitly start to transcribe the conversation.</string>
+ <key>NSScreenCaptureUsageDescription</key><string>Pluely captures a screen only when screen context is enabled for a question.</string>
+ <key>NSHighResolutionCapable</key><true/>
+</dict></plist>

@@ -1,0 +1,38 @@
+[package]
+name = "pluely"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+[lib]
+name = "pluely_app"
+crate-type = ["staticlib", "cdylib", "rlib"]
+[build-dependencies]
+[target.'cfg(any(target_os = "macos", target_os = "windows"))'.build-dependencies]
+tauri-build = { version = "2", features = [] }
+[dependencies]
+pluely-core = { path = "../crates/pluely-core" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+uuid = { version = "1", features = ["v4"] }
+chrono = "0.4"
+base64 = "0.22"
+getrandom = "0.2"
+[target.'cfg(any(target_os = "macos", target_os = "windows"))'.dependencies]
+tauri = { version = "2.12", features = ["tray-icon", "image-png", "macos-private-api"] }
+tauri-plugin-dialog = "2"
+tauri-plugin-global-shortcut = "2"
+tauri-plugin-opener = "2"
+keyring = { version = "3.6", features = ["apple-native", "windows-native"] }
+cpal = "0.16"
+image = { version = "0.25", default-features = false, features = ["png", "jpeg"] }
+pdf-extract = "0.12"
+xcap = "0.9"
+tauri-plugin-autostart = "2"
+tauri-plugin-single-instance = "2"
+sha2 = "0.10"
+futures-util = "0.3"
+reqwest = { version = "0.12", default-features = false, features = ["json", "stream", "rustls-tls"] }
+tokio-util = "0.7"
+[target.'cfg(target_os = "windows")'.dependencies]
+wasapi = "0.27"

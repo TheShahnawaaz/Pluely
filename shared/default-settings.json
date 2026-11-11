@@ -1,0 +1,27 @@
+{
+  "onboardingComplete": false,
+  "llm": {
+    "baseUrl": "https://api.openai.com/v1",
+    "model": "",
+    "vision": false,
+    "temperature": 0.3
+  },
+  "stt": {
+    "provider": "groq",
+    "model": "whisper-large-v3-turbo",
+    "language": "auto",
+    "localModel": ""
+  },
+  "theme": "light",
+  "captureExcluded": false,
+  "screenContext": true,
+  "noFocus": false,
+  "startAtLogin": false,
+  "protection": "unconfigured",
+  "shortcuts": {
+    "visibility": "CommandOrControl+\\",
+    "assist": "CommandOrControl+Enter",
+    "recording": "CommandOrControl+Shift+\\",
+    "clear": "CommandOrControl+R"
+  }
+}

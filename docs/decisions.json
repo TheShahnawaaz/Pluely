@@ -22,8 +22,7 @@
   ],
   "assets": "User states permission to redistribute original Cluely assets; preserve third-party notices",
   "pending": [
-    "History encryption product default",
-    "User test hardware"
+    "User hardware for native device validation"
   ],
   "github": {
     "repository": "TheShahnawaaz/Pluely",
@@ -31,5 +30,6 @@
     "visibility": "public",
     "branch": "main",
     "writeAccess": "Verified with actual Git push and remote SHA comparison"
-  }
+  },
+  "historyProtection": "User-selectable device-key/passphrase/OS-permission modes; recommend device-key encryption"
 }

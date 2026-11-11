@@ -20,3 +20,33 @@ Initial development scaffold. Native capture, provider integrations and release 
 ## License
 
 MIT for application code. Third-party assets and dependencies retain their applicable notices.
+
+## Development
+
+Install Node.js 24+, Rust stable, and the native platform toolchain. macOS requires Xcode command-line tools/Swift and macOS 14.2+; Windows requires Visual Studio C++ build tools and CMake.
+
+```sh
+npm ci
+cargo test -p pluely-core
+npm test
+npm run dev  # explicit browser UI preview; no recording or secure storage
+```
+
+For the native app, first build the sidecars for the installed Rust host target:
+
+```sh
+node scripts/build-sidecars.mjs
+npm run desktop
+```
+
+For macOS installer builds, pass `--config src-tauri/tauri.macos.conf.json` to `npm run tauri -- build`. This includes the system-audio helper. The GitHub Actions workflow builds the appropriate helpers and packages for each architecture automatically.
+
+## Privacy
+
+No account, app-owned server, telemetry or subscription is required. Select the LLM and transcription mode explicitly. Cloud transcription sends audio directly to the chosen provider; AI requests send the selected meeting/document/screen context to the configured model endpoint. Local transcription does not make a separately selected cloud LLM local.
+
+Choose device-key encryption, passphrase encryption or OS-permission-only history during onboarding. Credentials are stored separately in the OS credential store and are excluded from workspace exports. Portable backups require a separate passphrase. Audio buffers and screenshots are not saved as recordings in meeting history.
+
+## Validation and distribution
+
+Core/UI checks are distinct from native builds and actual audio/device tests. CI artifacts are development installers: macOS builds are ad-hoc signed and not notarized; Windows builds are unsigned. They are not a claim of universal screen-share exclusion, measured transcription accuracy or production readiness. Native recording, permissions, device switching and capture exclusion require testing on real machines. See the workflow results for the current build status.

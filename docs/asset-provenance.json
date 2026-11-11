@@ -1,0 +1,61 @@
+[
+  {
+    "path": "public/assets/tray-template@2x.png",
+    "sourceArtifact": "Cluely New 2.1.26 macOS",
+    "sourcePath": "tray-template@2x.png",
+    "sha256": "a270e1da308c01ec030267a7b918555320cf0ba791f451bca31847aa7c702836",
+    "permission": "User states permission to redistribute original Cluely-specific assets; font retains OFL."
+  },
+  {
+    "path": "public/assets/inter-latin.woff2",
+    "sourceArtifact": "Cluely New 2.1.26 macOS",
+    "sourcePath": "assets/inter-latin-wght-normal-Dx4kXJAl.woff2",
+    "sha256": "3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62",
+    "permission": "User states permission to redistribute original Cluely-specific assets; font retains OFL."
+  },
+  {
+    "path": "src-tauri/icons/128x128@2x.png",
+    "sourceArtifact": "Cluely New 2.1.26 macOS",
+    "sourcePath": "Contents/Resources/icon.icns",
+    "originalSha256": "017a6daa0ba665b24413772f98fd72c1715977a1838ae152d72bd693c7a78dac",
+    "sha256": "93534a51adb9e153d60533ef5d7f604549aede6ce65f962e599ddcfd29e97fcf",
+    "transformation": "Original ICNS or format/size conversion for native packaging",
+    "permission": "Project owner states redistribution permission"
+  },
+  {
+    "path": "src-tauri/icons/128x128.png",
+    "sourceArtifact": "Cluely New 2.1.26 macOS",
+    "sourcePath": "Contents/Resources/icon.icns",
+    "originalSha256": "017a6daa0ba665b24413772f98fd72c1715977a1838ae152d72bd693c7a78dac",
+    "sha256": "5cdf51d87bea534b757126e3ed20c34b53732852f783db3c40a80e7badf6f920",
+    "transformation": "Original ICNS or format/size conversion for native packaging",
+    "permission": "Project owner states redistribution permission"
+  },
+  {
+    "path": "src-tauri/icons/icon.icns",
+    "sourceArtifact": "Cluely New 2.1.26 macOS",
+    "sourcePath": "Contents/Resources/icon.icns",
+    "originalSha256": "017a6daa0ba665b24413772f98fd72c1715977a1838ae152d72bd693c7a78dac",
+    "sha256": "017a6daa0ba665b24413772f98fd72c1715977a1838ae152d72bd693c7a78dac",
+    "transformation": "Original ICNS or format/size conversion for native packaging",
+    "permission": "Project owner states redistribution permission"
+  },
+  {
+    "path": "src-tauri/icons/32x32.png",
+    "sourceArtifact": "Cluely New 2.1.26 macOS",
+    "sourcePath": "Contents/Resources/icon.icns",
+    "originalSha256": "017a6daa0ba665b24413772f98fd72c1715977a1838ae152d72bd693c7a78dac",
+    "sha256": "bbb9dcb3972ddebcd0f1394a86c0e516f12e65257da7503f3ef67fe07a03d137",
+    "transformation": "Original ICNS or format/size conversion for native packaging",
+    "permission": "Project owner states redistribution permission"
+  },
+  {
+    "path": "src-tauri/icons/icon.ico",
+    "sourceArtifact": "Cluely New 2.1.26 macOS",
+    "sourcePath": "Contents/Resources/icon.icns",
+    "originalSha256": "017a6daa0ba665b24413772f98fd72c1715977a1838ae152d72bd693c7a78dac",
+    "sha256": "fbbd517b56c001ea37707d8af0f1a666dd29ebc5ffffdbafd6bb6aeae935e7e6",
+    "transformation": "Original ICNS or format/size conversion for native packaging",
+    "permission": "Project owner states redistribution permission"
+  }
+]
