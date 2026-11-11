@@ -29,7 +29,8 @@
     "url": "https://github.com/TheShahnawaaz/Pluely",
     "visibility": "public",
     "branch": "main",
-    "writeAccess": "Verified with actual Git push and remote SHA comparison"
+    "writeAccess": "Verified with actual Git push and remote SHA comparison",
+    "ciFork": "https://github.com/shahclaudecode/Pluely"
   },
   "historyProtection": "User-selectable device-key/passphrase/OS-permission modes; recommend device-key encryption",
   "transcriptionDefault": "Local Whisper; explicit cloud selection remains available",
@@ -39,5 +40,5 @@
     "x86_64-pc-windows-msvc"
   ],
   "minimumMacOS": "14.2",
-  "status": "Implementation present; native builds and installers blocked on GitHub Actions scheduling"
+  "status": "macOS CI DMGs built in working fork; Windows/Ubuntu CI repairs pending rerun"
 }

@@ -8,7 +8,7 @@
 | `x86_64-apple-darwin` | Intel Mac, macOS 14.2+ | Intel Mac, Xcode command-line tools, Swift, CMake |
 | `x86_64-pc-windows-msvc` | Windows x64; Windows 11 is the initial device-test target | Windows, Visual Studio C++ tools, Windows SDK, CMake, WebView2 |
 
-These are configured targets, not a statement that installers have built or passed device tests. See [VALIDATION.md](VALIDATION.md). Windows ARM and universal macOS packaging are not currently configured. Linux has portable core tests/UI preview only.
+CI has built development macOS DMGs for both listed Mac architectures; device/installation testing is still pending. Windows packaging remains pending the Whisper binding fix and a successful rerun. See [VALIDATION.md](VALIDATION.md). Windows ARM and universal macOS packaging are not currently configured. Linux has portable core tests/UI preview only.
 
 Use Node.js 24+, npm, and Rust stable compatible with the lockfile (current Tauri requires at least Rust 1.90). Commit lockfile changes intentionally. Native builds must run on their respective OS: a Linux fallback `cargo check` cannot certify Windows/macOS modules or the Swift helper.
 
@@ -24,7 +24,7 @@ npx playwright install --with-deps chromium
 npx playwright test
 ```
 
-`npm run dev` opens an explicit UI preview on port 1420. It does not provide native recording, secure storage, real provider calls, or persistent meeting storage. Tests use the installed Playwright browser by default; `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select a compatible existing Chromium executable in constrained development environments.
+`npm run dev` opens an explicit UI preview on port 1420. It does not provide native recording, secure storage, real provider calls, or persistent meeting storage. Tests use the installed Playwright browser by default; `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select a compatible existing Chromium executable in constrained development environments. CI sets `PLAYWRIGHT_CHROMIUM_CHANNEL=chrome` to use Chrome and runtime libraries already installed on GitHub's Ubuntu image, without an additional apt/browser installation step.
 
 ## Build helpers before the desktop app
 
@@ -36,7 +36,7 @@ node scripts/build-sidecars.mjs aarch64-apple-darwin
 
 The script must run on a host with that target's actual native compiler/linker. It is not a complete cross-compilation toolchain. Generated binaries are gitignored. Release bundles locate helpers next to the executable; debug builds also accept the generated target-suffixed binaries in the source tree. No arbitrary executable supplied by the frontend is run.
 
-whisper-rs uses CMake/C++ through whisper.cpp. CI sets `WHISPER_DONT_GENERATE_BINDINGS=1` to use the library's provided bindings and avoid a separate libclang requirement. Set the same environment variable if needed locally. On shells where environment assignment syntax differs, configure it using that shell's normal environment mechanism.
+whisper-rs uses CMake/C++ through whisper.cpp. macOS CI sets `WHISPER_DONT_GENERATE_BINDINGS=1` to use the library's provided bindings. On Windows, the helper script removes this flag from the child build environment and generates native bindings using LLVM's `libclang.dll`: whisper-rs-sys 0.15.0's bundled file contains Linux/glibc layouts that fail MSVC size assertions. Install LLVM and set `LIBCLANG_PATH` to its bin directory, or use the default `C:\Program Files\LLVM\bin`. The GitHub Windows image includes LLVM. The script cleans only the release `whisper-rs-sys` package before the Windows build because upstream does not track changes to the skip-bindings flag, and a restored cache must not reuse those glibc bindings. Do not disable the layout assertions as a workaround.
 
 ## Desktop development and packaging
 
@@ -68,7 +68,7 @@ The Tauri pre-build command builds frontend assets and runs `scripts/collect-lic
 
 Expected artifact patterns under `target/<triple>/release/bundle/` are macOS DMG and Windows NSIS EXE/MSI. Their existence must be verified from a successful run; a configured upload path is not evidence of an artifact. macOS app tarballs are an optional pattern, not a guaranteed output.
 
-The first attempted run was rejected before any step: [42983343223](https://github.com/TheShahnawaaz/Pluely/actions/runs/42983343223). GitHub returned an account-level scheduling restriction. Restoring Actions eligibility or supplying usable native runners is necessary before this pipeline can be debugged against real native compilers. Do not repeatedly dispatch jobs while that restriction remains.
+The original account's first attempted run was rejected before any step: [42983343223](https://github.com/TheShahnawaaz/Pluely/actions/runs/42983343223). A working fork subsequently ran [43035042849](https://github.com/shahclaudecode/Pluely/actions/runs/43035042849), successfully compiling and packaging both Mac targets. Its Windows job exposed the Whisper binding defect; Ubuntu's browser installation hit a DNS failure in the configured apt mirror. The current patch generates native Windows bindings and uses hosted Chrome to avoid that unnecessary mirror dependency. Rerun on the fork after applying the patch; the original account restriction does not establish the fork's current status.
 
 Development packages are unsigned on Windows and ad-hoc signed, without notarization, on macOS. No signing credentials have been supplied. A production distribution must separately establish signing/notarization and verify installation/update trust behavior; do not label these development packages as signed production releases. There is no configured application updater/feed.
 

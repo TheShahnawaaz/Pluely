@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "scope": "Source commit containing this record",
   "repository": "https://github.com/TheShahnawaaz/Pluely",
-  "status": "blocked_native_validation",
+  "status": "native_ci_repair_pending",
   "productionReady": false,
   "verifiedInstallers": [],
   "host": {
@@ -14,12 +14,36 @@
     "browser": "system Chromium via Playwright executable override"
   },
   "checks": [
-    {"command": "npm run build", "result": "passed"},
-    {"command": "npm test", "result": "passed", "tests": 11},
-    {"command": "cargo test -p pluely-core", "result": "passed", "unitTests": 17, "httpIntegrationTests": 3},
-    {"command": "cargo fmt --all --check", "result": "passed"},
-    {"command": "PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npx playwright test", "result": "passed", "tests": 4, "scope": "UI preview only"},
-    {"command": "cargo check/build -p pluely-transcribe", "result": "passed", "scope": "Linux worker only"}
+    {
+      "command": "npm run build",
+      "result": "passed"
+    },
+    {
+      "command": "npm test",
+      "result": "passed",
+      "tests": 11
+    },
+    {
+      "command": "cargo test -p pluely-core",
+      "result": "passed",
+      "unitTests": 17,
+      "httpIntegrationTests": 3
+    },
+    {
+      "command": "cargo fmt --all --check",
+      "result": "passed"
+    },
+    {
+      "command": "PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npx playwright test",
+      "result": "passed",
+      "tests": 4,
+      "scope": "UI preview only"
+    },
+    {
+      "command": "cargo check/build -p pluely-transcribe",
+      "result": "passed",
+      "scope": "Linux worker only"
+    }
   ],
   "localInference": {
     "result": "passed",
@@ -31,17 +55,9 @@
     "elapsedSecondsApproximate": 1.2,
     "nativeDeviceTest": false
   },
-  "blocker": {
-    "service": "GitHub Actions",
-    "kind": "account_scheduling_restriction",
-    "run": "https://github.com/TheShahnawaaz/Pluely/actions/runs/42983343223",
-    "jobsStarted": false,
-    "requiredAction": "Repository owner resolves GitHub account restriction or supplies usable supported-OS runners"
-  },
   "unverified": [
-    "Windows/macOS Tauri compilation",
-    "macOS Swift capture helper compilation",
-    "Native installer packaging and installation",
+    "Windows Whisper/Tauri compilation and packaging after patch",
+    "Installation and runtime checks for packaged apps",
     "Microphone/system audio and permissions on supported devices",
     "Capture exclusion and focus behavior",
     "Native OS credential storage",
@@ -49,5 +65,56 @@
     "Native shutdown, crash recovery, long-session and device-switch behavior",
     "Production signing/notarization"
   ],
-  "resumeDocument": "BUILD_AND_RELEASE.md"
+  "resumeDocument": "BUILD_AND_RELEASE.md",
+  "ciFork": "https://github.com/shahclaudecode/Pluely",
+  "ciBuilds": [
+    {
+      "target": "aarch64-apple-darwin",
+      "jobId": 130571577582,
+      "result": "passed",
+      "installer": "Pluely_0.1.0_aarch64.dmg",
+      "artifactId": 13864185367,
+      "archiveSha256": "d0f66d883840b25958288d80430e3ad84e11207658bd5cf1a84d27efc240d12e",
+      "installedOrDeviceTested": false
+    },
+    {
+      "target": "x86_64-apple-darwin",
+      "jobId": 130571578276,
+      "result": "passed",
+      "installer": "Pluely_0.1.0_x64.dmg",
+      "artifactId": 13863204486,
+      "archiveSha256": "2d8ecb4656a8665eb4dc04ae5d4df75d9f8a7625d9245b3183d7857f3aca4d7b",
+      "installedOrDeviceTested": false
+    }
+  ],
+  "ciBuildSource": {
+    "run": "https://github.com/shahclaudecode/Pluely/actions/runs/43035042849",
+    "sha": "c7bc92556fc242f9583445251eb4aec44b469c93"
+  },
+  "historicalOriginalAccountBlocker": {
+    "service": "GitHub Actions",
+    "kind": "account_scheduling_restriction",
+    "run": "https://github.com/TheShahnawaaz/Pluely/actions/runs/42983343223",
+    "jobsStarted": false,
+    "requiredAction": "Repository owner resolves GitHub account restriction or supplies usable supported-OS runners"
+  },
+  "blocker": {
+    "kind": "fork_ci_repair_requires_validation",
+    "requiredAction": "Apply the patch on the working fork using write access or a fork-owner-approved pull request, then run CI"
+  },
+  "ciRepairs": [
+    {
+      "job": "Windows",
+      "cause": "Bundled glibc Whisper bindings used on MSVC",
+      "change": "Require LLVM libclang, generate native bindings and invalidate stale whisper-rs-sys cache",
+      "nativeResult": "pending"
+    },
+    {
+      "job": "core-and-ui",
+      "cause": "Ubuntu apt mirror DNS failure during Playwright font installation",
+      "change": "Use hosted Chrome through Playwright channel; no additional apt installation",
+      "hostedResult": "pending",
+      "localBrowserTestsPassed": 4
+    }
+  ]
 }

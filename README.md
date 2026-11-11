@@ -6,7 +6,7 @@ Bring your own OpenAI-compatible language model and choose local Whisper transcr
 
 ## Status
 
-The desktop implementation, provider adapters, local Whisper worker, and native CI configuration are present. Portable checks pass, but Windows/macOS builds and device behavior are not yet verified: GitHub Actions is currently blocked before jobs can start. No verified installers have been produced. This repository is not a finished application. See [validation and continuation status](docs/VALIDATION.md).
+The desktop implementation, provider adapters, local Whisper worker, and native CI configuration are present. The fork's CI built macOS development DMGs for Apple Silicon and Intel. Windows Whisper compilation and Ubuntu browser-test setup need the fixes described in the [validation record](docs/VALIDATION.md). Real-device behavior and installer installation remain unverified. This repository is not a finished application.
 
 ## Agreed first-release scope
 

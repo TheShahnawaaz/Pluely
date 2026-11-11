@@ -24,8 +24,12 @@ jobs:
       - run: npm run build
       - run: npm test
       - run: cargo test -p pluely-core
-      - run: npx playwright install --with-deps chromium
-      - run: npx playwright test
+      # Hosted Ubuntu already includes Chrome and its runtime libraries. Avoid an
+      # unrelated apt mirror outage when installing Playwright's optional fonts.
+      - name: Run browser tests with hosted Chrome
+        run: npx playwright test
+        env:
+          PLAYWRIGHT_CHROMIUM_CHANNEL: chrome
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
