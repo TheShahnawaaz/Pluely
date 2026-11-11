@@ -1,0 +1,29 @@
+{
+  "name": "Pluely",
+  "platforms": [
+    "macOS",
+    "Windows"
+  ],
+  "stack": [
+    "Tauri",
+    "Rust",
+    "React",
+    "TypeScript"
+  ],
+  "license": "MIT",
+  "localFirst": true,
+  "accountRequired": false,
+  "scope": "All personal desktop features; calendar/mobile/teams later",
+  "llm": "OpenAI-compatible APIs and local endpoints",
+  "transcription": [
+    "Local Whisper model download/import",
+    "Groq API with user key",
+    "ElevenLabs API with user key"
+  ],
+  "assets": "User states permission to redistribute original Cluely assets; preserve third-party notices",
+  "pending": [
+    "History encryption product default",
+    "User test hardware"
+  ],
+  "github": "Not created or pushed"
+}
