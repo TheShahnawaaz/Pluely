@@ -1,10 +1,9 @@
 {
   "schemaVersion": 1,
-  "scope": "Source commit containing this record",
+  "scope": "CI and artifacts at ciBuildSource.sha; documentation-only record changes may follow",
   "repository": "https://github.com/TheShahnawaaz/Pluely",
-  "status": "native_ci_repair_pending",
+  "status": "ci_builds_passed_device_validation_pending",
   "productionReady": false,
-  "verifiedInstallers": [],
   "host": {
     "os": "Linux",
     "supportedDesktopTarget": false,
@@ -56,7 +55,7 @@
     "nativeDeviceTest": false
   },
   "unverified": [
-    "Windows Whisper/Tauri compilation and packaging after patch",
+    "Actual native application behavior, beyond successful compilation and installer structure checks",
     "Installation and runtime checks for packaged apps",
     "Microphone/system audio and permissions on supported devices",
     "Capture exclusion and focus behavior",
@@ -70,26 +69,70 @@
   "ciBuilds": [
     {
       "target": "aarch64-apple-darwin",
-      "jobId": 130571577582,
+      "jobId": 130603833168,
       "result": "passed",
-      "installer": "Pluely_0.1.0_aarch64.dmg",
-      "artifactId": 13864185367,
-      "archiveSha256": "d0f66d883840b25958288d80430e3ad84e11207658bd5cf1a84d27efc240d12e",
+      "artifactId": 13867301391,
+      "artifactUrl": "https://github.com/shahclaudecode/Pluely/actions/runs/43044239506/artifacts/13867301391",
+      "archiveSha256": "8d12d29cbd1261741668a2b044fc1c9853e9019b0615e6ae038bb32a22f299b4",
+      "archiveDownloadedAndHashVerified": true,
+      "installers": [
+        {
+          "path": "dmg/Pluely_0.1.0_aarch64.dmg",
+          "bytes": 10728133,
+          "sha256": "d650692ec4587df6777bbf38da113acb7757da7c5ff8de2d5b46b515efbb4a24",
+          "udifTrailer": "koly"
+        }
+      ],
       "installedOrDeviceTested": false
     },
     {
       "target": "x86_64-apple-darwin",
-      "jobId": 130571578276,
+      "jobId": 130603833251,
       "result": "passed",
-      "installer": "Pluely_0.1.0_x64.dmg",
-      "artifactId": 13863204486,
-      "archiveSha256": "2d8ecb4656a8665eb4dc04ae5d4df75d9f8a7625d9245b3183d7857f3aca4d7b",
+      "artifactId": 13865884257,
+      "artifactUrl": "https://github.com/shahclaudecode/Pluely/actions/runs/43044239506/artifacts/13865884257",
+      "archiveSha256": "9615508a279c837d2dbd18bdc8c524e66b1a0806c1f56d7c4e4bc1cbf12096fc",
+      "archiveDownloadedAndHashVerified": true,
+      "installers": [
+        {
+          "path": "dmg/Pluely_0.1.0_x64.dmg",
+          "bytes": 11236111,
+          "sha256": "cec3fd7287e804151517fd1fcd78c46f09cae1493e2275e0a6bfe288a93a656b",
+          "udifTrailer": "koly"
+        }
+      ],
+      "installedOrDeviceTested": false
+    },
+    {
+      "target": "x86_64-pc-windows-msvc",
+      "jobId": 130603832913,
+      "result": "passed",
+      "artifactId": 13867840244,
+      "artifactUrl": "https://github.com/shahclaudecode/Pluely/actions/runs/43044239506/artifacts/13867840244",
+      "archiveSha256": "1447c551837abf265fcb1629c6d686ce9b1682796a8cfc7852a356055819d29c",
+      "archiveDownloadedAndHashVerified": true,
+      "installers": [
+        {
+          "path": "msi/Pluely_0.1.0_x64_en-US.msi",
+          "bytes": 7307264,
+          "sha256": "9d757a17007264689975b8644bdfb75acfa11ba14dc914ec770e90ba47d5c724",
+          "format": "MSI compound file"
+        },
+        {
+          "path": "nsis/Pluely_0.1.0_x64-setup.exe",
+          "bytes": 4989822,
+          "sha256": "330419610e8e50d2a42e07c629f28748614cedb922542c9665f06b41a0b280e3",
+          "format": "PE"
+        }
+      ],
       "installedOrDeviceTested": false
     }
   ],
   "ciBuildSource": {
-    "run": "https://github.com/shahclaudecode/Pluely/actions/runs/43035042849",
-    "sha": "c7bc92556fc242f9583445251eb4aec44b469c93"
+    "run": "https://github.com/shahclaudecode/Pluely/actions/runs/43044239506",
+    "sha": "0a2bb49c435d966dd4896abb60e330e573f06307",
+    "conclusion": "success",
+    "allJobsPassed": true
   },
   "historicalOriginalAccountBlocker": {
     "service": "GitHub Actions",
@@ -98,23 +141,25 @@
     "jobsStarted": false,
     "requiredAction": "Repository owner resolves GitHub account restriction or supplies usable supported-OS runners"
   },
-  "blocker": {
-    "kind": "fork_ci_repair_requires_validation",
-    "requiredAction": "Apply the patch on the working fork using write access or a fork-owner-approved pull request, then run CI"
-  },
   "ciRepairs": [
     {
       "job": "Windows",
       "cause": "Bundled glibc Whisper bindings used on MSVC",
       "change": "Require LLVM libclang, generate native bindings and invalidate stale whisper-rs-sys cache",
-      "nativeResult": "pending"
+      "nativeResult": "passed: native bindings, worker and desktop compilation, EXE/MSI packaging"
     },
     {
       "job": "core-and-ui",
       "cause": "Ubuntu apt mirror DNS failure during Playwright font installation",
       "change": "Use hosted Chrome through Playwright channel; no additional apt installation",
-      "hostedResult": "pending",
+      "hostedResult": "passed: all four browser tests using hosted Chrome",
       "localBrowserTestsPassed": 4
     }
-  ]
+  ],
+  "forkWriteAccess": "Verified by actual push to main at 0a2bb49c435d966dd4896abb60e330e573f06307",
+  "installationTestsPerformed": false,
+  "priorCiBuildSource": {
+    "run": "https://github.com/shahclaudecode/Pluely/actions/runs/43035042849",
+    "sha": "c7bc92556fc242f9583445251eb4aec44b469c93"
+  }
 }

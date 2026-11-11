@@ -1,0 +1,6 @@
+# Pluely 0.1.0 development installers
+# Source 0a2bb49c435d966dd4896abb60e330e573f06307; Actions run 43044239506
+d650692ec4587df6777bbf38da113acb7757da7c5ff8de2d5b46b515efbb4a24  dmg/Pluely_0.1.0_aarch64.dmg
+cec3fd7287e804151517fd1fcd78c46f09cae1493e2275e0a6bfe288a93a656b  dmg/Pluely_0.1.0_x64.dmg
+9d757a17007264689975b8644bdfb75acfa11ba14dc914ec770e90ba47d5c724  msi/Pluely_0.1.0_x64_en-US.msi
+330419610e8e50d2a42e07c629f28748614cedb922542c9665f06b41a0b280e3  nsis/Pluely_0.1.0_x64-setup.exe

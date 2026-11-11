@@ -10,6 +10,7 @@ Read these documents in order when continuing development. The source is the imp
 6. [IPC reference](IPC.md): commands and events connecting React to Rust.
 7. [Machine-readable validation](validation.json): concise evidence for automation and AI continuation.
 8. [Asset provenance](asset-provenance.json) and [third-party notices](../THIRD_PARTY_NOTICES.md): source identity and license handling.
+9. [Installer SHA-256 checksums](installers/SHA256SUMS): downloaded installer files from the successful native CI run.
 
 The earlier Cluely reconstruction investigation informed interaction and provider choices. Pluely's implementation is independent Rust/React/Swift code; these documents describe Pluely rather than treating private Cluely server behavior as known. Aura's MIT-licensed cloud transcription routing informed the Groq and ElevenLabs request contracts. Evidence gaps remain explicit in [VALIDATION.md](VALIDATION.md).
 

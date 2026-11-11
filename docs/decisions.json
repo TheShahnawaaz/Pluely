@@ -30,7 +30,8 @@
     "visibility": "public",
     "branch": "main",
     "writeAccess": "Verified with actual Git push and remote SHA comparison",
-    "ciFork": "https://github.com/shahclaudecode/Pluely"
+    "ciFork": "https://github.com/shahclaudecode/Pluely",
+    "forkWriteAccess": "Verified by actual push to shahclaudecode/Pluely main"
   },
   "historyProtection": "User-selectable device-key/passphrase/OS-permission modes; recommend device-key encryption",
   "transcriptionDefault": "Local Whisper; explicit cloud selection remains available",
@@ -40,5 +41,5 @@
     "x86_64-pc-windows-msvc"
   ],
   "minimumMacOS": "14.2",
-  "status": "macOS CI DMGs built in working fork; Windows/Ubuntu CI repairs pending rerun"
+  "status": "All configured CI targets pass; macOS DMG and Windows EXE/MSI artifacts verified; device validation pending"
 }

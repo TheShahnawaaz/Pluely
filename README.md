@@ -6,7 +6,7 @@ Bring your own OpenAI-compatible language model and choose local Whisper transcr
 
 ## Status
 
-The desktop implementation, provider adapters, local Whisper worker, and native CI configuration are present. The fork's CI built macOS development DMGs for Apple Silicon and Intel. Windows Whisper compilation and Ubuntu browser-test setup need the fixes described in the [validation record](docs/VALIDATION.md). Real-device behavior and installer installation remain unverified. This repository is not a finished application.
+The desktop implementation, provider adapters, local Whisper worker, and native CI configuration are present. [CI passes on all configured targets](https://github.com/shahclaudecode/Pluely/actions/runs/43044239506): macOS Apple Silicon/Intel DMGs and Windows x64 EXE/MSI installers are available from that run. Archives and installer file checksums have been checked; installation, audio capture, permissions and other real-device behavior remain unverified. These are development builds, not a finished release. See the [validation record](docs/VALIDATION.md) and [installer checksums](docs/installers/SHA256SUMS).
 
 ## Agreed first-release scope
 
@@ -23,7 +23,7 @@ MIT for application code. Third-party assets and dependencies retain their appli
 
 ## Development
 
-Install Node.js 24+, Rust stable, and the native platform toolchain. macOS requires Xcode command-line tools/Swift and macOS 14.2+; Windows requires Visual Studio C++ build tools and CMake.
+Install Node.js 24+, Rust stable, and the native platform toolchain. macOS requires Xcode command-line tools/Swift and macOS 14.2+; Windows requires Visual Studio C++ build tools, CMake and LLVM libclang for native Whisper bindings. See [native build instructions](docs/BUILD_AND_RELEASE.md).
 
 ```sh
 npm ci
